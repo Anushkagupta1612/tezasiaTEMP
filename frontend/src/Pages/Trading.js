@@ -1,6 +1,5 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { ethers } from 'ethers';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "../styles/trading.css";
@@ -10,53 +9,50 @@ import { CategoryData } from "../data";
 
 
 const Trading = () => {
-  const [showPlayer, setshowPlayer] = useState(false);
-  const [showImage, setshowImage] = useState(false);
-  const [showBut, setshowBut] = useState(true);
-  const [sellerAddress, setsellerAddress] = useState("");
-  const addr = GetAccount();
-  const [data, setData] = useState([]);
-  const [team, setTeam] = useState([]);
-  const [nftCount, setnftCount] = useState(0)
-  const [playerId, setPlayerId] = useState(0);
-  const [sellamt, setsellamt] = useState(0);
-  const[TokenID,setTokenID]=useState('');
-  const signer = GetSigner();
+  const [ showPlayer, setshowPlayer ] = useState( false );
+  const [ showImage, setshowImage ] = useState( false );
+  const [ showBut, setshowBut ] = useState( true );
+  const [ sellerAddress, setsellerAddress ] = useState( "" );
+  const addr = 'tz1duN8WMAXZwD8TZ3AMVBftix7AjfBgdmrf'
+  const [ data, setData ] = useState( [] );
+  const [ team, setTeam ] = useState( [] );
+  const [ nftCount, setnftCount ] = useState( 0 )
+  const [ playerId, setPlayerId ] = useState( 0 );
+  const [ sellamt, setsellamt ] = useState( 0 );
+  const [ TokenID, setTokenID ] = useState( '' );
+  // const signer = GetSigner();
 
 
-  const teamNameHandler = (e) => {
-    setTeam(iplData[e]);
-    setshowPlayer(true);
+  const teamNameHandler = ( e ) => {
+    setTeam( iplData[ e ] );
+    setshowPlayer( true );
   };
 
-  const contract = GetContract();
-  const account = GetAccount();
+  const showToken = async ( sellerAddres ) => {
+    console.log( sellerAddres )
+    setTokenID( id.toString() );
+    console.log( 'Token', id.toString() );
+  }
 
-const showToken=async(sellerAddres)=>{
-  console.log(sellerAddres)
-  var id = await contract.showTokenID(ethers.utils.getAddress(sellerAddres));
-  setTokenID(id.toString());
-  console.log('Token',id.toString());
-}
+  useEffect( () => {
+    getNftCount()
+  } )
 
-useEffect( () => {
-  getNftCount()
-})
+  const approveNft = async () => {
+    await contract.approve( account, TokenID );
+  }
 
-const approveNft = async() => {
-    await contract.approve(account,TokenID);
-}
-
-const transferNft = async() => {
-    const owner = await contract.ownerOf(TokenID);
-    console.log(owner);
-    const tx = await signer.sendTransaction({
-        to: owner,
-        value : ethers.utils.parseEther(sellamt.toString()), //Pass amount decided by the seller in the auction contract
-    })
-    await contract.transferFrom(owner,account,TokenID);
-    console.log(tx);
-
+  const transferNft = async () => {
+    try {
+      const contractInstance = await tezos.wallet.at( "KT1SKxiNGRD3ziaQVDwxZnpYJcDLuhmhfRa8" );
+      const op = await contractInstance.methods.transfer_tx_().send( {
+        amount: 1,
+        mutez: false,
+      } );
+      await op.confirmation( 1 );
+    } catch ( err ) {
+      throw err;
+    }
     await fetch( `http://localhost:3008/trading/${ addr }/${ playerId }/${ sellerAddress }`, {
       method: "PATCH",
       headers: {
@@ -75,13 +71,13 @@ const transferNft = async() => {
         console.log( 'Done!' )
       } );
     } );
-}
+  }
 
-  const playerNameHandler = async(e) => {
-    setshowImage(true);
-    setPlayerId(PlayerIdData[e]);
-    await getAddress(PlayerIdData[e]);
-    await getData1(PlayerIdData[e]);
+  const playerNameHandler = async ( e ) => {
+    setshowImage( true );
+    setPlayerId( PlayerIdData[ e ] );
+    await getAddress( PlayerIdData[ e ] );
+    await getData1( PlayerIdData[ e ] );
   };
 
   async function getData1 ( playerId ) {
@@ -100,11 +96,11 @@ const transferNft = async() => {
     await fetch( `http://localhost:3008/trading/${ playerId }` )
       .then( ( res ) => {
         res.json().then( ( data1 ) => {
-          if ( data1[0][0] === false ) {
+          if ( data1[ 0 ][ 0 ] === false ) {
             setshowBut( false );
           } else {
             setsellerAddress( data1[ 2 ] )
-            showToken(data1[2])
+            showToken( data1[ 2 ] )
             setsellamt( data1[ 1 ] )
             setshowBut( true );
           }
@@ -115,11 +111,11 @@ const transferNft = async() => {
   }
 
   const getNftCount = async () => {
-    const val  = await contract.balanceOf(addr)
-    setnftCount(val.toString())
-    console.log(val.toString())
+    const val = await contract.balanceOf( addr )
+    setnftCount( val.toString() )
+    console.log( val.toString() )
   }
-  
+
 
 
   return (
@@ -152,24 +148,24 @@ const transferNft = async() => {
           >
             <button
               className="teamName mt-3"
-              onClick={() => teamNameHandler("CSK")}
+              onClick={ () => teamNameHandler( "CSK" ) }
             >
               CSK
             </button>
-            <button className="teamName" onClick={() => teamNameHandler("MI")}>
+            <button className="teamName" onClick={ () => teamNameHandler( "MI" ) }>
               MI
             </button>
-            <button className="teamName" onClick={() => teamNameHandler("GT")}>
+            <button className="teamName" onClick={ () => teamNameHandler( "GT" ) }>
               GT
             </button>
-            <button className="teamName" onClick={() => teamNameHandler("RR")}>
+            <button className="teamName" onClick={ () => teamNameHandler( "RR" ) }>
               RR
             </button>
           </div>
         </div>
       </div>
 
-      {!showPlayer ? (
+      { !showPlayer ? (
         <></>
       ) : (
         <div className="Details">
@@ -195,52 +191,52 @@ const transferNft = async() => {
               aria-labelledby="headingOne"
               data-parent="#accordionExample1"
             >
-              {team.map((item, val) => (
+              { team.map( ( item, val ) => (
                 <button
                   className="teamName"
-                  onClick={() => playerNameHandler(item)}
+                  onClick={ () => playerNameHandler( item ) }
                 >
-                  {item}
+                  { item }
                 </button>
-              ))}
+              ) ) }
             </div>
           </div>
         </div>
-      )}
+      ) }
 
-      {!showImage ? (
+      { !showImage ? (
         <></>
       ) : (
         <div className="NFTDetails">
-          {playerId != 0 ? (
-            <img src={CategoryData[playerId][1]} className="PlayerNFT" />
+          { playerId != 0 ? (
+            <img src={ CategoryData[ playerId ][ 1 ] } className="PlayerNFT" />
           ) : (
             <div class="spinner-border text-warning" role="status">
               <span class="sr-only">Loading...</span>
             </div>
-          )}
+          ) }
           <div className="Price">
-            {data.map((item, val) => (
-              <button className="priceButton">{item[1]}</button>
-            ))}
+            { data.map( ( item, val ) => (
+              <button className="priceButton">{ item[ 1 ] }</button>
+            ) ) }
           </div>
-          {(showBut && nftCount == 0 ) && (
+          { ( showBut && nftCount == 0 ) && (
             <>
-            <button class="button-75" role="button" onClick={()=>approveNft()} >
-              <span class="text" >
-                Approve NFT Transfer
-              </span>
-            </button>
-            <button class="button-75 mt-2" role="button" onClick={()=>transferNft()} >
-              <span class="text" >
-                BUY IT NOW!
-              </span>
-            </button>
+              <button class="button-75" role="button" onClick={ () => approveNft() } >
+                <span class="text" >
+                  Approve NFT Transfer
+                </span>
+              </button>
+              <button class="button-75 mt-2" role="button" onClick={ () => transferNft() } >
+                <span class="text" >
+                  BUY IT NOW!
+                </span>
+              </button>
             </>
 
-          )}
+          ) }
         </div>
-      )}
+      ) }
       <Footer />
     </div>
   );

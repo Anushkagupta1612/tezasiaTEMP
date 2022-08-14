@@ -25,8 +25,6 @@ const Auction = () => {
   const [ sellVal, setsellVal ] = useState( 0 );
   const [ playerid, setplayerid ] = useState( 0 );
 
-  const { ethereum } = window;
-
   const teamNameHandler = ( e ) => {
     setTeam( iplData[ e ] );
     setshowPlayer( true );
@@ -43,24 +41,15 @@ const Auction = () => {
   };
 
   const placeBidHandler = async () => {
-    if ( typeof ethereum !== "undefined" ) {
-      console.log( "MetaMask is installed!" );
-      const provider = new ethers.providers.Web3Provider( ethereum );
-      const tempSigner = provider.getSigner();
-      const contract = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        tempSigner
-      );
-      const newbidAmount = bidAmount;
-      const transaction = await contract.make_bid( {
-        value: ethers.utils.parseEther( ( newbidAmount ).toString() )
+    try {
+      const contractInstance = await tezos.wallet.at( "KT1SKxiNGRD3ziaQVDwxZnpYJcDLuhmhfRa8" );
+      const op = await contractInstance.methods.make_bid().send( {
+        amount: 1,
+        mutez: false,
       } );
-      await transaction.wait()
-      setplaceBid( true );
-      placebid();
-    } else {
-      console.log( "Metamask not found!" );
+      await op.confirmation( 1 );
+    } catch ( err ) {
+      throw err;
     }
   };
 
@@ -124,23 +113,15 @@ const Auction = () => {
   };
 
   const saveChange = async () => {
-    if ( typeof ethereum !== "undefined" ) {
-      console.log( "MetaMask is installed!" );
-      const provider = new ethers.providers.Web3Provider( ethereum );
-      const tempSigner = provider.getSigner();
-      const contract = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        tempSigner
-      );
-      const newbidAmount = sellVal;
-      const transaction = await contract.make_bid( {
-        value: ethers.utils.parseEther( ( newbidAmount - bidAmount ).toString() )
+    try {
+      const contractInstance = await tezos.wallet.at( "KT1SKxiNGRD3ziaQVDwxZnpYJcDLuhmhfRa8" );
+      const op = await contractInstance.methods.make_bid().send( {
+        amount: 1,
+        mutez: false,
       } );
-      await transaction.wait()
-      await updateSellAmt();
-    } else {
-      console.log( "Metamask not found!" );
+      await op.confirmation( 1 );
+    } catch ( err ) {
+      throw err;
     }
   };
 
@@ -261,7 +242,7 @@ const Auction = () => {
           <div className="Bid">
             {/* <button className='tradingButton'>Base price</button> */ }
             {/* <button className='tradingButton'>Place your</button> */ }
-            { (!placeBid && ((typeof addr === 'string') || addr.props.children !== 'Disconnected')) && (
+            { ( !placeBid && ( ( typeof addr === 'string' ) || addr.props.children !== 'Disconnected' ) ) && (
               <div class="input-block">
                 <input
                   type="text"
@@ -276,7 +257,7 @@ const Auction = () => {
               </div>
             ) }
           </div>
-          { (!placeBid && ((typeof addr === 'string') || addr.props.children !== 'Disconnected')) && (
+          { ( !placeBid && ( ( typeof addr === 'string' ) || addr.props.children !== 'Disconnected' ) ) && (
             <button onClick={ () => placeBidHandler() } className="PlaceBid">
               Place Bid
             </button>
@@ -362,7 +343,6 @@ const Auction = () => {
           ) }
         </div>
       ) }
-
       <Footer />
     </div>
   );
