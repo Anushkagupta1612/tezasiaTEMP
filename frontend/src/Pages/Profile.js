@@ -4,9 +4,6 @@ import Footer from "../components/Footer";
 import "../styles/profile.css";
 import { CategoryData } from "../data";
 import { MetaData } from "../metadata";
-import abi from "../artifacts/auction.json";
-import GetContract from "../hooks/GetContract";
-import { ethers } from "ethers";
 import { connectWallet, getAccount } from "../toolkit/wallet";
 
 const Profile = () => {

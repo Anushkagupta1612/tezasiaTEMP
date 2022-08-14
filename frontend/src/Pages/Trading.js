@@ -7,9 +7,7 @@ import "../styles/trading.css";
 import { PlayerIdData } from "../playerToid";
 import { iplData } from "../iplData";
 import { CategoryData } from "../data";
-import GetAccount from "../hooks/GetAccount"
-import GetContract from '../hooks/GetContract'
-import GetSigner from '../hooks/GetSigner'
+
 
 const Trading = () => {
   const [showPlayer, setshowPlayer] = useState(false);

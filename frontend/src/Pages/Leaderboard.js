@@ -3,9 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "../styles/leaderboard.css";
 import ReactPaginate from 'react-paginate';
-import { ethers } from "ethers";
-import GetAccount from "../hooks/GetAccount"
-import GetContract from '../hooks/GetContract';
+
 
 const Leaderboard = () => {
   const addr = GetAccount()
