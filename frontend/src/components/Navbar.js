@@ -6,7 +6,7 @@ import "../styles/navbar.css"
 import { Connect } from './ConnectButton';
 
 
-const Navbar1 = () => {
+const Navbar1 = (props) => {
 
   return (
     <div>
@@ -37,7 +37,7 @@ const Navbar1 = () => {
             </li>
           </ul>
           <div className='nav-item ml-auto'>
-            <Connect />
+            <Connect  />
           </div>
         </div>
       </nav>
